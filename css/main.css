@@ -1,0 +1,33 @@
+body {
+  background-color: #637CEF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container{
+  display: flex;
+  align-items: flex-end;
+}
+
+.device {
+  width: 430px;
+  height: 877px;
+  background: no-repeat url(../imgs/iPhone6.png);
+  background-size: 100% 100%;
+  background-position: center center;
+  text-align: center;
+}
+
+iframe {
+  margin-top: 100px;
+  width: 375px;
+  height: 675px;
+  background-color: white;
+}
+
+h1{
+  color: white;
+  margin-left: 40px;
+  margin-bottom: 100px;
+}

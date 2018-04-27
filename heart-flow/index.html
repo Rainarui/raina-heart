@@ -1,0 +1,1327 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow-x: hidden;
+    }
+
+    *::-webkit-scrollbar {
+      display: none;
+    }
+
+    .prototype-container {
+      position: relative;
+      height: 100%;
+    }
+
+    .artboard {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      width: 375px !important;
+      height: 1334/2 !important;
+      /* background-size: 100% 50%; */
+      background-size: contain;
+      background-repeat: no-repeat;
+      visibility: hidden;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, .12);
+    }
+
+    .artboard.is-active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .hotspot {
+      cursor: pointer;
+      position: absolute;
+      opacity: 0;
+      background-color: rgba(239, 108, 0, .2);
+      box-shadow:
+          0 0 0 3px rgba(239, 108, 0, .5) inset,
+          0 4px 8px rgba(239, 108, 0, .25);
+    }
+
+    .highlight-hotspots .hotspot {
+      animation: hotspotAnimation .6s ease;
+    }
+
+    @keyframes hotspotAnimation {
+      0% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="prototype-container">
+  </div>
+
+  <script>
+
+    class Proto {
+      constructor(prototypeData) {
+        this.prototypeData = prototypeData;
+        this.buildUi();
+      }
+
+      buildUi() {
+        this.buildArtboards();
+
+        if (this.prototypeData.title) {
+          document.title = this.prototypeData.title;
+        }
+
+        $(window).on('hashchange', () => {
+          this.setArtboardVisible(this.getUrlInfo().artboardId);
+        });
+
+        $(document).click(() => {
+          $(document.body).removeClass('highlight-hotspots');
+          let f = document.body.offsetWidth;
+          $(document.body).addClass('highlight-hotspots');
+        });
+
+        this.setArtboardVisible(this.getUrlInfo().artboardId);
+      }
+
+      getUrlInfo() {
+        let hash = window.location.hash;
+
+        return {
+          artboardId: hash ? hash.substring(1) : this.prototypeData.flowStartArtboardId,
+        };
+      }
+
+      buildArtboards() {
+        Object.keys(this.prototypeData.artboards).forEach(id => {
+          let artboardData = this.prototypeData.artboards[id];
+          let $artboard = $('<div>')
+              .addClass('artboard')
+              .attr('data-artboard-id', id)
+              .css({
+                backgroundImage: `url(${id}.png)`,
+                width: artboardData.width,
+                height: artboardData.height,
+              })
+              .appendTo('.prototype-container');
+
+          artboardData.hotspots.forEach(hotspotData => {
+            let $hotspot = $('<div>')
+              .addClass('hotspot')
+              .attr('data-artboard-id', id)
+              .css({
+                left: hotspotData.rectangle.x,
+                top: hotspotData.rectangle.y,
+                width: hotspotData.rectangle.width,
+                height: hotspotData.rectangle.height,
+              })
+              .appendTo($artboard);
+            $hotspot.click(event => {
+              this.gotoTarget(hotspotData.target)
+              event.stopPropagation();
+            });
+          });
+        });
+      }
+
+      gotoTarget(target) {
+        if (target == 'back') {
+          history.back();
+          return;
+        }
+
+        this.gotoArtboard(target);
+      }
+
+      gotoArtboard(artboardId) {
+        window.location.href= '#' + artboardId;
+        document.body.scrollTo(0, 0);
+      }
+
+      setArtboardVisible(artboardId) {
+        $('.artboard').removeClass('is-active');
+        $(`.artboard[data-artboard-id="${artboardId}"]`).addClass('is-active');
+      }
+    }
+
+  </script>
+  <script>
+    new Proto(
+      {
+  "title": "完整版医疗APP",
+  "flowStartArtboardId": "3C19F151-20B7-404B-97CB-9817EAAC99CF",
+  "artboards": {
+    "3C19F151-20B7-404B-97CB-9817EAAC99CF": {
+      "title": "00_Splash",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 0,
+            "y": 0,
+            "width": 750/2,
+            "height": 1334/2
+          },
+          "target": "C7F58AA9-8588-4617-A4F5-14F63C4ABC8E"
+        }
+      ]
+    },
+    "C7F58AA9-8588-4617-A4F5-14F63C4ABC8E": {
+      "title": "01_Walkthroughs #1",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 295,
+            "y": 1174/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "B3964B36-1123-4452-B731-D26E999B6A23"
+        }
+      ]
+    },
+    "B3964B36-1123-4452-B731-D26E999B6A23": {
+      "title": "02_Walkthroughs #2",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 40,
+            "y": 1174,
+            "width": 120,
+            "height": 120
+          },
+          "target": "C7F58AA9-8588-4617-A4F5-14F63C4ABC8E"
+        },
+        {
+          "rectangle": {
+            "x": 590/2,
+            "y": 1174/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "F7D67E8F-55FD-4CDC-849F-FF68D937565D"
+        }
+      ]
+    },
+    "F7D67E8F-55FD-4CDC-849F-FF68D937565D": {
+      "title": "03_Walkthroughs #3",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1189/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "228F1F0B-B142-4506-BBEA-A1B5C0B9B531"
+        }
+      ]
+    },
+    "228F1F0B-B142-4506-BBEA-A1B5C0B9B531": {
+      "title": "04_Sign In",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 867/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "80ACC19C-4239-409E-9A7F-0CE48630BD0D"
+        }
+      ]
+    },
+    "80ACC19C-4239-409E-9A7F-0CE48630BD0D": {
+      "title": "08_Start Birthday",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "7910A6D2-87E0-476C-84C4-7969F0330E1F"
+        },
+        {
+          "rectangle": {
+            "x": 644/2,
+            "y": 55/2,
+            "width": 76/2,
+            "height": 43/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "228F1F0B-B142-4506-BBEA-A1B5C0B9B531"
+        }
+      ]
+    },
+    "7910A6D2-87E0-476C-84C4-7969F0330E1F": {
+      "title": "09_Start Gender",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "80125EAB-6478-4A6F-96C5-5C770D576D00"
+        },
+        {
+          "rectangle": {
+            "x": 644/2,
+            "y": 55/2,
+            "width": 76/2,
+            "height": 43/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958": {
+      "title": "12_Main Services",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 51/2,
+            "y": 1261/2,
+            "width": 48/2,
+            "height": 48/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        },
+        {
+          "rectangle": {
+            "x": 207/2,
+            "y": 1261/2,
+            "width": 35/2,
+            "height": 47/2
+          },
+          "target": "DF72AEEF-8B08-4D40-8697-A0D28A993A90"
+        },
+        {
+          "rectangle": {
+            "x": 655/2,
+            "y": 1261/2,
+            "width": 41/2,
+            "height": 49/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        },
+        {
+          "rectangle": {
+            "x": 501/2,
+            "y": 1265/2,
+            "width": 48/2,
+            "height": 40/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 506/2,
+            "width": 330/2,
+            "height": 270/2
+          },
+          "target": "38B73D0F-2EEE-4A53-8EB3-DB0F46E5DB1A"
+        },
+        {
+          "rectangle": {
+            "x": 390/2,
+            "y": 506/2,
+            "width": 330/2,
+            "height": 270/2
+          },
+          "target": "92230A29-87CC-4ED4-B934-1AEE4350369F"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 836/2,
+            "width": 330/2,
+            "height": 270/2
+          },
+          "target": "CCDF86EE-AC5A-4316-91A0-1676A5B8FC1F"
+        },
+        {
+          "rectangle": {
+            "x": 683/2,
+            "y": 62/2,
+            "width": 37/2,
+            "height": 44/2
+          },
+          "target": "EE51017B-0319-49D1-B65C-668FE6A7B954"
+        }
+      ]
+    },
+    "80125EAB-6478-4A6F-96C5-5C770D576D00": {
+      "title": "10_Start Weight",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "58804236-FF84-4267-8A27-1C43276FB6E9"
+        },
+        {
+          "rectangle": {
+            "x": 644/2,
+            "y": 55/2,
+            "width": 76/2,
+            "height": 43/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB": {
+      "title": "43_Drugs",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 207/2,
+            "y": 1261/2,
+            "width": 35/2,
+            "height": 47/2
+          },
+          "target": "DF72AEEF-8B08-4D40-8697-A0D28A993A90"
+        },
+        {
+          "rectangle": {
+            "x": 600/2,
+            "y": 1236/2,
+            "width": 150/2,
+            "height": 98/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        },
+        {
+          "rectangle": {
+            "x": 450/2,
+            "y": 1236/2,
+            "width": 150/2,
+            "height": 98/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        },
+        {
+          "rectangle": {
+            "x": 315/2,
+            "y": 1196/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 506/2,
+            "width": 330/2,
+            "height": 270/2
+          },
+          "target": "63EB44BF-A90B-4095-AFF7-BA7527BD6D0F"
+        },
+        {
+          "rectangle": {
+            "x": 390/2,
+            "y": 836/2,
+            "width": 330/2,
+            "height": 270/2
+          },
+          "target": "B9EDE6DA-8308-49E8-B5A7-7E2DA0CBEAA2"
+        }
+      ]
+    },
+    "DF72AEEF-8B08-4D40-8697-A0D28A993A90": {
+      "title": "22_List Doctors",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 51/2,
+            "y": 1261/2,
+            "width": 48/2,
+            "height": 48/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        },
+        {
+          "rectangle": {
+            "x": 600/2,
+            "y": 1236/2,
+            "width": 150/2,
+            "height": 98/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        },
+        {
+          "rectangle": {
+            "x": 450/2,
+            "y": 1236/2,
+            "width": 150/2,
+            "height": 98/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        },
+        {
+          "rectangle": {
+            "x": 315/2,
+            "y": 1196/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "3999CDBE-3F34-4694-9CD5-DDF7A68924B3": {
+      "title": "39_UserProfile",
+      "width": 750/2,
+      "height": 1700/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 1087/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "929BCC1B-322F-42ED-B8E3-EB025FE83FCD"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 1406/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "40CDA805-68F5-4E5F-91EC-C179333B38A2"
+        },
+        {
+          "rectangle": {
+            "x": 51/2,
+            "y": 1627/2,
+            "width": 48/2,
+            "height": 48/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        },
+        {
+          "rectangle": {
+            "x": 207/2,
+            "y": 1627/2,
+            "width": 35/2,
+            "height": 47/2
+          },
+          "target": "DF72AEEF-8B08-4D40-8697-A0D28A993A90"
+        },
+        {
+          "rectangle": {
+            "x": 501/2,
+            "y": 1631/2,
+            "width": 48/2,
+            "height": 40/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        },
+        {
+          "rectangle": {
+            "x": 315/2,
+            "y": 1562/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "C408BE94-F9D0-43C6-88A4-526C6000CC7F": {
+      "title": "35_Dashboard test indicators",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 676/2,
+            "y": 62/2,
+            "width": 44/2,
+            "height": 44/2
+          },
+          "target": "0F43F0AE-F0A2-40FE-BF25-B5903D595192"
+        },
+        {
+          "rectangle": {
+            "x": 51/2,
+            "y": 1261/2,
+            "width": 48/2,
+            "height": 48/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        },
+        {
+          "rectangle": {
+            "x": 207/2,
+            "y": 1261/2,
+            "width": 35/2,
+            "height": 47/2
+          },
+          "target": "DF72AEEF-8B08-4D40-8697-A0D28A993A90"
+        },
+        {
+          "rectangle": {
+            "x": 600/2,
+            "y": 1236/2,
+            "width": 150/2,
+            "height": 98/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        },
+        {
+          "rectangle": {
+            "x": 315/2,
+            "y": 1196/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "38B73D0F-2EEE-4A53-8EB3-DB0F46E5DB1A": {
+      "title": "14_Find Doctor",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        },
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "B9104628-F1D4-4B76-86F0-67D014D1590B"
+        }
+      ]
+    },
+    "92230A29-87CC-4ED4-B934-1AEE4350369F": {
+      "title": "15_Find Hospital",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "EEF11E1D-A228-4F48-91FE-5BBFA8AF2D8B"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "CCDF86EE-AC5A-4316-91A0-1676A5B8FC1F": {
+      "title": "13_Appointment",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "699C005E-0AE2-4F19-8A91-7398CFB06A37"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "EE51017B-0319-49D1-B65C-668FE6A7B954": {
+      "title": "21_Notification",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "58804236-FF84-4267-8A27-1C43276FB6E9": {
+      "title": "11_Start Height",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        },
+        {
+          "rectangle": {
+            "x": 644/2,
+            "y": 55/2,
+            "width": 76/2,
+            "height": 43/2
+          },
+          "target": "AC3D27CD-FAA9-49DE-AAB3-691EE9CEC958"
+        }
+      ]
+    },
+    "63EB44BF-A90B-4095-AFF7-BA7527BD6D0F": {
+      "title": "44_List Drugs",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 188/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 348/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 508/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 668/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 828/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 988/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 1148/2,
+            "width": 690/2,
+            "height": 120/2
+          },
+          "target": "D0DE806F-1BB0-4F84-B787-A7AC267242D7"
+        },
+        {
+          "rectangle": {
+            "x": 600/2,
+            "y": 1184/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "911CA7DF-A591-49B7-9366-CC706735E74A"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        }
+      ]
+    },
+    "B9EDE6DA-8308-49E8-B5A7-7E2DA0CBEAA2": {
+      "title": "47_Drugs Shop",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 278/2,
+            "width": 330/2,
+            "height": 400/2
+          },
+          "target": "04740A61-DF4E-4981-A78F-D4A64BB43038"
+        },
+        {
+          "rectangle": {
+            "x": 390/2,
+            "y": 278/2,
+            "width": 330/2,
+            "height": 400/2
+          },
+          "target": "04740A61-DF4E-4981-A78F-D4A64BB43038"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 708/2,
+            "width": 330/2,
+            "height": 400/2
+          },
+          "target": "04740A61-DF4E-4981-A78F-D4A64BB43038"
+        },
+        {
+          "rectangle": {
+            "x": 390/2,
+            "y": 708/2,
+            "width": 330/2,
+            "height": 400/2
+          },
+          "target": "04740A61-DF4E-4981-A78F-D4A64BB43038"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "CB72FF2F-49FB-4F34-AF2F-F839CD65E4DB"
+        }
+      ]
+    },
+    "929BCC1B-322F-42ED-B8E3-EB025FE83FCD": {
+      "title": "40_Goal Settings",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        }
+      ]
+    },
+    "40CDA805-68F5-4E5F-91EC-C179333B38A2": {
+      "title": "42_Insurrance",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "3999CDBE-3F34-4694-9CD5-DDF7A68924B3"
+        }
+      ]
+    },
+    "0F43F0AE-F0A2-40FE-BF25-B5903D595192": {
+      "title": "36_Indicators Settings Devices",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 449/2,
+            "y": 182/2,
+            "width": 186.84375/2,
+            "height": 38/2
+          },
+          "target": "15DB7656-C50F-4E88-9BE2-C12B9327DE8F"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        }
+      ]
+    },
+    "B9104628-F1D4-4B76-86F0-67D014D1590B": {
+      "title": "18_Result Find Doctor",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 271/2,
+            "width": 690/2,
+            "height": 200/2
+          },
+          "target": "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 511/2,
+            "width": 690/2,
+            "height": 200/2
+          },
+          "target": "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 751/2,
+            "width": 690/2,
+            "height": 200/2
+          },
+          "target": "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB"
+        },
+        {
+          "rectangle": {
+            "x": 32/2,
+            "y": 991/2,
+            "width": 690/2,
+            "height": 200/2
+          },
+          "target": "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "38B73D0F-2EEE-4A53-8EB3-DB0F46E5DB1A"
+        }
+      ]
+    },
+    "EEF11E1D-A228-4F48-91FE-5BBFA8AF2D8B": {
+      "title": "19_Result Find Hospital",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "92230A29-87CC-4ED4-B934-1AEE4350369F"
+        }
+      ]
+    },
+    "699C005E-0AE2-4F19-8A91-7398CFB06A37": {
+      "title": "20_Appointment Calendar",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 620.5594855305467/2,
+            "width": 690/2,
+            "height": 160/2
+          },
+          "target": "19E80179-8DCC-4017-AA6C-4E79A52DD787"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 821/2,
+            "width": 690/2,
+            "height": 160/2
+          },
+          "target": "19E80179-8DCC-4017-AA6C-4E79A52DD787"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 1021.440514469453/2,
+            "width": 690/2,
+            "height": 160/2
+          },
+          "target": "19E80179-8DCC-4017-AA6C-4E79A52DD787"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 1221.881028938907/2,
+            "width": 690/2,
+            "height": 160/2
+          },
+          "target": "19E80179-8DCC-4017-AA6C-4E79A52DD787"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "CCDF86EE-AC5A-4316-91A0-1676A5B8FC1F"
+        }
+      ]
+    },
+    "D0DE806F-1BB0-4F84-B787-A7AC267242D7": {
+      "title": "46_DrugsDetails",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "63EB44BF-A90B-4095-AFF7-BA7527BD6D0F"
+        }
+      ]
+    },
+    "911CA7DF-A591-49B7-9366-CC706735E74A": {
+      "title": "45_Add Drugs",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1184/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "63EB44BF-A90B-4095-AFF7-BA7527BD6D0F"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "63EB44BF-A90B-4095-AFF7-BA7527BD6D0F"
+        }
+      ]
+    },
+    "04740A61-DF4E-4981-A78F-D4A64BB43038": {
+      "title": "48_Drugs Shop Details",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "B9EDE6DA-8308-49E8-B5A7-7E2DA0CBEAA2"
+        }
+      ]
+    },
+    "15DB7656-C50F-4E88-9BE2-C12B9327DE8F": {
+      "title": "37_Indicators Settings Types",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 316/2,
+            "width": 690/2,
+            "height": 216/2
+          },
+          "target": "89BEB039-5450-493B-9AD8-677FF043CB39"
+        },
+        {
+          "rectangle": {
+            "x": 59.14285714285711/2,
+            "y": 182/2,
+            "width": 298.0602678571428/2,
+            "height": 38/2
+          },
+          "target": "0F43F0AE-F0A2-40FE-BF25-B5903D595192"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "C408BE94-F9D0-43C6-88A4-526C6000CC7F"
+        }
+      ]
+    },
+    "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB": {
+      "title": "23_Maps Doctors",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 50/2,
+            "y": 854/2,
+            "width": 270/2,
+            "height": 420/2
+          },
+          "target": "64EF8C02-D760-449C-BBF2-F4772B5D2FFE"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "B9104628-F1D4-4B76-86F0-67D014D1590B"
+        }
+      ]
+    },
+    "19E80179-8DCC-4017-AA6C-4E79A52DD787": {
+      "title": "20_Appointment Details",
+      "width": 750/2,
+      "height": 1438/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 1288/2,
+            "width": 640/2,
+            "height": 90/2
+          },
+          "target": "699C005E-0AE2-4F19-8A91-7398CFB06A37"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "699C005E-0AE2-4F19-8A91-7398CFB06A37"
+        }
+      ]
+    },
+    "89BEB039-5450-493B-9AD8-677FF043CB39": {
+      "title": "38_Indicators Details",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "15DB7656-C50F-4E88-9BE2-C12B9327DE8F"
+        }
+      ]
+    },
+    "64EF8C02-D760-449C-BBF2-F4772B5D2FFE": {
+      "title": "24_Doctor Details",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 575/2,
+            "y": 288/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "CC510E05-4F9F-4071-930B-E74ECD0B1829"
+        },
+        {
+          "rectangle": {
+            "x": 55/2,
+            "y": 288/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "E30B5FFC-DE31-4F32-94A5-AF6DD485C322"
+        },
+        {
+          "rectangle": {
+            "x": 115/2,
+            "y": 737/2,
+            "width": 520/2,
+            "height": 78/2
+          },
+          "target": "882338C7-35F4-4F62-AC4D-B300BD32BF06"
+        },
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "A11F0BB4-81EE-48C0-ABE4-616B9F5FEBDB"
+        }
+      ]
+    },
+    "CC510E05-4F9F-4071-930B-E74ECD0B1829": {
+      "title": "26_Doctor Message",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "64EF8C02-D760-449C-BBF2-F4772B5D2FFE"
+        }
+      ]
+    },
+    "E30B5FFC-DE31-4F32-94A5-AF6DD485C322": {
+      "title": "27_Call Doctor",
+      "width": 750/2,
+      "height": 1334/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 315/2,
+            "y": 1134/2,
+            "width": 120/2,
+            "height": 120/2
+          },
+          "target": "64EF8C02-D760-449C-BBF2-F4772B5D2FFE"
+        }
+      ]
+    },
+    "882338C7-35F4-4F62-AC4D-B300BD32BF06": {
+      "title": "31_Book appointment",
+      "width": 750/2,
+      "height": 1480/2,
+      "hotspots": [
+        {
+          "rectangle": {
+            "x": 30/2,
+            "y": 67/2,
+            "width": 52/2,
+            "height": 33.44051446945338/2
+          },
+          "target": "64EF8C02-D760-449C-BBF2-F4772B5D2FFE"
+        }
+      ]
+    }
+  }
+}
+    );
+  </script>
+
+</body>
+</html>
